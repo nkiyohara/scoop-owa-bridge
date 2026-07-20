@@ -1,0 +1,45 @@
+name: Test Manifest
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: manifest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Validate archives and command
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out bucket
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Validate manifest, hashes, and executable
+        shell: pwsh
+        run: |
+          $manifest = Get-Content -Raw .\owa-bridge.json | ConvertFrom-Json
+          $downloads = Join-Path $env:RUNNER_TEMP 'owa-bridge-downloads'
+          New-Item -ItemType Directory -Path $downloads | Out-Null
+
+          foreach ($entry in $manifest.architecture.PSObject.Properties) {
+            $archive = Join-Path $downloads "$($entry.Name).zip"
+            Invoke-WebRequest -Uri $entry.Value.url -OutFile $archive
+            $actual = (Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant()
+            if ($actual -ne $entry.Value.hash) {
+              throw "SHA-256 mismatch for $($entry.Name)"
+            }
+          }
+
+          $install = Join-Path $downloads 'installed'
+          Expand-Archive (Join-Path $downloads '64bit.zip') -DestinationPath $install
+          & (Join-Path $install 'owa.exe') version --json

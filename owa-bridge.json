@@ -1,0 +1,35 @@
+{
+    "version": "0.3.1",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nkiyohara/owa-bridge/releases/download/v0.3.1/owa-bridge_0.3.1_windows_amd64.zip",
+            "bin": [
+                "owa.exe"
+            ],
+            "hash": "17845974ab8e8777f7a6da9f3f24a9b1db65746433c1fc5a5ca4fa2e1e491012"
+        },
+        "arm64": {
+            "url": "https://github.com/nkiyohara/owa-bridge/releases/download/v0.3.1/owa-bridge_0.3.1_windows_arm64.zip",
+            "bin": [
+                "owa.exe"
+            ],
+            "hash": "53b73fd5aa788ac27a4e29ceb15a6beac2fd79e09135ec28ff586474039733fa"
+        }
+    },
+    "homepage": "https://github.com/nkiyohara/owa-bridge",
+    "license": "Apache-2.0",
+    "description": "Local-first Outlook Web CLI and MCP server",
+    "checkver": {
+        "github": "https://github.com/nkiyohara/owa-bridge"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/nkiyohara/owa-bridge/releases/download/v$version/owa-bridge_$version_windows_amd64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/nkiyohara/owa-bridge/releases/download/v$version/owa-bridge_$version_windows_arm64.zip"
+            }
+        }
+    }
+}
